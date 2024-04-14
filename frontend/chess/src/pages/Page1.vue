@@ -8,6 +8,7 @@ import 'bootstrap/dist/js/bootstrap'
 import {UserInfoStore} from "../plugins/userInfo.js";
 import {draw} from "../logic/chessView.js";
 import {onMounted} from "vue";
+import {test} from "../logic/test.js";
 
 
 const myrouter=useRouter();
@@ -17,6 +18,7 @@ function gotoSecond(){
 
 onMounted(()=>{
   draw()
+  // test()
 })
 
 
@@ -24,26 +26,21 @@ onMounted(()=>{
 
 <template>
 
-<!--  <div class="mybtn"><button @click="gotoSecond" type="button" class="btn btn-success">下一页</button></div>-->
-<!-- <div class="Chessboard">-->
-<!--   <img class="chess" src="../img/stype_2/b_c.png">-->
-<!--   <img class="chess" src="../img/stype_2/b_c.png">-->
-<!--   <img class="chess" src="../img/stype_2/b_c.png">-->
+<div class="row-cols-3">ada</div>
+<canvas id="chess" style="margin-left: 200px"></canvas>
 
-<!-- </div>-->
-<!--  <img src="../img/stype_2/bg.png">-->
-
-<canvas id="chess" width="800px" height="400px" ></canvas>
 </template>
 
 <style scoped>
-.Chessboard{
-  background-image: url("../img/stype_2/bg.png");
-  background-repeat: no-repeat;
+
+#chess{
+.box{
 
 
 }
-.chess{
-  width: 57px;
+  #chess{
+    display: block;
+    margin-left: 100px;
+  }
 }
 </style>
