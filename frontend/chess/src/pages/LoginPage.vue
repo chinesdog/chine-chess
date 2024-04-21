@@ -9,7 +9,7 @@ let username;
   function  login(){
 
     UserInfoStore.storeLoginInfo(username,password)
-    // console.log(UserInfoStore.username)
+
 
 
     axios({
@@ -21,7 +21,8 @@ let username;
       }
     }).then((res)=>{
       if(res.data==="success"){
-        myrouter.push("/Page1")
+        UserInfoStore.login()
+        myrouter.push("/Match")
       }
       else {
         window.alert("密码错误")
@@ -34,8 +35,12 @@ let username;
   }
 </script>
 
-<template>
-  <div class="container card" id="login" style="width:300px ; margin-top: 100px" >
+<template >
+  <div class="bg_login"></div>
+
+
+
+  <div class="container card" id="login" style="width:300px ;"  v-if="UserInfoStore.islogin===false">
     <div class="card-body" method="post">
       <div class="mb-3">
         <label for="text1" class="form-label">用户名</label>
@@ -55,8 +60,24 @@ let username;
     </div>
   </div>
 
+
+
+
 </template>
 
 <style scoped>
+.bg_login{
+  position: fixed;
 
+  width: 100%;
+  height: 100%;
+
+  background-image: url("../assets/login_bg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+
+}
+.card{
+  top: 100px;
+}
 </style>

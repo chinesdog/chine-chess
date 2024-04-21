@@ -1,38 +1,37 @@
 package com.example.demo;
 
 
-import com.example.demo.utils.CustomFileReader;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-@SpringBootTest
 
 class DemoApplicationTests {
 
-	@Autowired
-	private UserMapper userMapper;
-	@Autowired
-	private PostFavourMapper postFavourMapper;
-	@Autowired
-	private PostThumbMapper postThumbMapper;
-	@Autowired
-	private PostMapper postMapper;
 
-	@Test
-	public  void test() {
-		String baseurl="D:\\JAVA\\智慧司法\\demo\\src\\main\\resources\\static\\txt_utf";
-		File file=new File(baseurl);
-		File []afile=file.listFiles();
+	public static List<Thread>list;
 
-		for(File item: afile){
-			PostEntity entity=new PostEntity();
-			String filename=item.getName().split("[.]")[0];
-			postMapper.saveBooks(filename,"无","贷款",66);
-
+	public static void main(String[] args) {
+		list=new ArrayList<>();
+		for(int i=0;i<=15;i++){
+			list.add(new thread("he"+String.valueOf(i)));
 		}
-    }
+		for(int i=0;i<=15;i++){
+			list.get(i).start();
+		}
+		try {
+			Thread.sleep(2000);
+			System.out.println("剩余的票数" +vote.total);
+		}catch (InterruptedException e){
+			e.printStackTrace();
+		}
+
+
+	}
 
 }

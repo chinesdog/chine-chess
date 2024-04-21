@@ -21,6 +21,17 @@ public class UserEntity {
     @Column(name = "avatar")
     private String avatar;
 
+    @Basic
+    @Column(name = "scores")
+    private int scores;
+
+    public int getScores() {
+        return scores;
+    }
+
+    public void setScores(int scores) {
+        this.scores = scores;
+    }
 //    public UserEntity(String username, String password) {
 //        this.username = username;
 //        this.password = password;

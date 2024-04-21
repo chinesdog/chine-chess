@@ -12,9 +12,7 @@ import {test} from "../logic/test.js";
 
 
 const myrouter=useRouter();
-function gotoSecond(){
-  myrouter.push("/Page2")
-}
+
 
 onMounted(()=>{
   draw()
@@ -25,22 +23,22 @@ onMounted(()=>{
 </script>
 
 <template>
+  <div class="bg_main"></div>
 
-<div class="row-cols-3">ada</div>
-<canvas id="chess" style="margin-left: 200px"></canvas>
+
+ <canvas id="chess" style="margin-left: 200px; margin-top: 100px"></canvas>
 
 </template>
 
 <style scoped>
 
-#chess{
-.box{
-
-
-}
-  #chess{
-    display: block;
-    margin-left: 100px;
+  .bg_main{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-image: url("../assets/main_bg.jpg");
+    background-repeat: no-repeat;
+    z-index: -1;
   }
-}
 </style>
