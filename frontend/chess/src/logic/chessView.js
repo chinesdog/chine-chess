@@ -181,9 +181,10 @@ function draw(){
 
             move(movechess, a.x,a.y)
 
-            // socketStore.socket.send(JSON.stringify({
-            //     event:"start"
-            // }))
+            socketStore.socket.send(JSON.stringify({
+                event:socketStore.status
+
+            }))
             com.set_dot([])
             com.update()
             com.state="prepare"

@@ -7,8 +7,9 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/js/bootstrap'
 import {UserInfoStore} from "../plugins/userInfo.js";
 import {draw} from "../logic/chessView.js";
-import {onMounted} from "vue";
+import {onMounted, onUnmounted} from "vue";
 import {test} from "../logic/test.js";
+import {socketStore} from "../plugins/socketStore.js";
 
 
 const myrouter=useRouter();
@@ -16,9 +17,11 @@ const myrouter=useRouter();
 
 onMounted(()=>{
   draw()
-  // test()
-})
 
+})
+onUnmounted(()=>{
+
+})
 
 </script>
 

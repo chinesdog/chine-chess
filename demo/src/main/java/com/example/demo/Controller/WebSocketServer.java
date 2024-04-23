@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.Mapper.UseUserMapper;
 import com.example.demo.entity.UserEntity;
+import com.example.demo.utils.RELATIONS;
+import com.example.demo.utils.Regulator;
 import com.example.demo.utils.STATUS;
 import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
@@ -20,11 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketServer {
     private  Session session;
     private static UseUserMapper userMapper;
-    private String Username;
+    public String Username;
 
     public  String Status= STATUS.Prepare;
 
     public  String Opponents;
+
+    public String Relations;
+    public Regulator regulator;
     public static ConcurrentHashMap<String,WebSocketServer>Manager=new ConcurrentHashMap<>();
     @Autowired
     public void setUserMapper(UseUserMapper userMapper){
@@ -32,7 +37,9 @@ public class WebSocketServer {
     }
 
     public  void switchStatus(String newstatus){
-        this.Status=newstatus;
+        synchronized(this.Status){
+            this.Status=newstatus;
+        }
     }
     @OnOpen
     public void onOpen(Session session, @PathParam("token") String token){
@@ -78,6 +85,9 @@ public class WebSocketServer {
         if(this.Username!=null){
             Manager.remove(this.Username);
         }
+        if(this.regulator!=null){
+//            this.regulator.
+        }
     }
 
     @OnMessage
@@ -85,27 +95,53 @@ public class WebSocketServer {
 
         JSONObject data=JSONObject.parseObject(message);
         String event=data.getString("event");
-        if(event == STATUS.Match){
-            sendMessage();
+        if(event.equals(STATUS.Match)){
+            this.Status=STATUS.Match;
+            StartMatching();
         }
 
 
+
     }
-    public void sendMessage(){
+//    int cnt=0;
+    public void tellMatch(WebSocketServer socket){
+
+        socket.Status=STATUS.Fight;
+        socket.Opponents=this.Username;
+        String avatar=getUserAvartarByName(this.Username);
+        JSONObject resp=new JSONObject();
+        resp.put("event","ok");
+        resp.put("opponent",this.Username);
+        resp.put("opponent_avatar",avatar);
+        try{
+            socket.session.getBasicRemote().sendText(resp.toJSONString());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+//        设置两个连接的关系。只有属于主要的，才分配有资源
+        this.Relations= RELATIONS.Dominate;
+        socket.Relations=RELATIONS.Belongs;
+//        this.regulator=new Regulator(this,socket);
+//        this.regulator.start();
+//        this.session.getBasicRemote().sendText(resp.toJSONString());
+    }
+    public void StartMatching(){
         synchronized (this.session){
+            if(this.Status.equals(STATUS.Match)==false)return;
             try{
                 for(Map.Entry<String,WebSocketServer> entry: Manager.entrySet()){
                     WebSocketServer opponent=entry.getValue();
-                    if(opponent.Status==STATUS.Match){
-                        opponent.switchStatus(STATUS.Fight);
+                    if(opponent.Status.equals(STATUS.Match) && opponent.Username.equals(this.Username)==false){
+
                         this.Opponents= opponent.Username;
+                        this.Status=STATUS.Fight;
                         String avatar=getUserAvartarByName(opponent.Username);
                         JSONObject resp=new JSONObject();
-                        resp.put("event",STATUS.Fight);
+                        resp.put("event","ok");
                         resp.put("opponent",this.Opponents);
                         resp.put("opponent_avatar",avatar);
+                        tellMatch(opponent);
                         this.session.getBasicRemote().sendText(resp.toJSONString());
-
                     }
                 }
 

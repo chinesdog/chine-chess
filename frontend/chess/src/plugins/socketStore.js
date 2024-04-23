@@ -6,6 +6,10 @@ export  const socketStore=reactive({
     socket:null,
     opponent:'',
     opponent_avatar:'../img/unknown.png',
+    direction:'',
+    isConnected:false,
+    solid_timer:null,
+    isMatching:false,
     setInfo(socket,opponent='',opponent_avatar=''){
         this.socket=socket
         this.opponent=opponent

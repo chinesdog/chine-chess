@@ -3,12 +3,15 @@ import {socketStore} from "../plugins/socketStore.js";
 import axios from "axios";
 import {UserInfoStore} from "../plugins/userInfo.js";
 import {useRouter} from "vue-router";
-import {onMounted, onUnmounted} from "vue";
+import {onMounted, onUnmounted, Static} from "vue";
 import {Match,Fight,Prepare} from "../logic/status.js";
+import {delay} from "../logic/delay.js";
 
-let myroute=useRouter();
-let time;
-onMounted(()=>{
+let myroute=useRouter();;
+function connect(){
+
+
+
   let socket =new WebSocket(`ws://localhost:8080/websocket/${UserInfoStore.username}&${UserInfoStore.password}`)
   socketStore.setInfo(socket)
 
@@ -18,23 +21,32 @@ onMounted(()=>{
   socket.onclose=function (){
     console.log("断开连接")
   }
-  socket.onmessage=function (msg){
+  socket.onmessage=function (msg) {
 
-    window.clearInterval(time)
-    const data=JSON.parse(msg.data);
-    console.log(data.event)
+
+    const data = JSON.parse(msg.data);
+    if (data.event === "ok") {
+      socketStore.opponent = data.opponent;
+      socketStore.opponent_avatar = data.opponent_avatar;
+      socketStore.status = Fight
+      socketStore.isMatching=false;
+      window.clearInterval(socketStore.solid_timer)
+      setTimeout(() => {
+        myroute.push("Fight")
+      }, 2000)
+    }
   }
-  socketStore.status=Prepare
-})
-onUnmounted(()=>{
+}
 
-  socketStore.socket.close();
-})
 function match(){
+  connect()
+  socketStore.isConnected=true;
+  socketStore.isMatching=true
   socketStore.status=Match
-  time=window.setInterval(sendmessage,2000)
+  socketStore.solid_timer=window.setInterval(sendmessage,2000)
 }
 function sendmessage(){
+  console.log(socketStore.status)
   socketStore.socket.send(JSON.stringify({
     event:socketStore.status
   }))
@@ -43,8 +55,11 @@ function sendmessage(){
 
 </script>
 
+
+
 <template>
-<div class="bg_match"></div>
+
+  <div class="bg_match"></div>
 
 
   <div class="row box" style="margin-top: 50px">
@@ -65,13 +80,10 @@ function sendmessage(){
     </div>
   </div>
   <div class="row box">
-    <button  v-if="socketStore.status===Prepare" @click="match" type="button" class="btn btn-warning col-4">匹配</button>
+    <button    v-if="socketStore.status===Prepare" @click="match" type="button" class="btn btn-warning col-4">匹配</button>
     <button  v-if="socketStore.status===Match" type="button" class="btn btn-success col-4">匹配中</button>
+    <button  v-if="socketStore.status===Fight" type="button" class="btn btn-success col-4">匹配成功</button>
   </div>
-
-
-
-
 
 </template>
 
@@ -104,5 +116,14 @@ img{
   width: 200px;
   height: 200px;
   border-radius: 50%;
+}
+.bg_main{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-image: url("../assets/main_bg.jpg");
+  background-repeat: no-repeat;
+  z-index: -1;
 }
 </style>

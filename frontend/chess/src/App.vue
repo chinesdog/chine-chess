@@ -2,18 +2,38 @@
 
 import {useRouter} from "vue-router";
 import {UserInfoStore} from "./plugins/userInfo.js";
+import {socketStore} from "./plugins/socketStore.js";
+import {Prepare} from "./logic/status.js";
 
 let myrouter=useRouter()
+
+function cancelConnect(){
+  if(socketStore.isConnected==true){
+    if(socketStore.isMatching==true){
+      window.clearInterval(socketStore.solid_timer)
+    }
+    socketStore.status=Prepare
+    socketStore.isConnected=false
+    socketStore.socket.close()
+    socketStore.opponent=''
+    socketStore.opponent_avatar='../img/unknown.png'
+    socketStore.isMatching=false
+  }
+}
 function match(){
+  cancelConnect()
   myrouter.push("/Match")
 }
 function login(){
+  cancelConnect()
   myrouter.push("/")
 }
 function user(){
+  cancelConnect()
   myrouter.push("Center")
 }
 function rank(){
+  cancelConnect()
   myrouter.push("Rank")
 }
 
